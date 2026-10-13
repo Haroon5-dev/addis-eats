@@ -1,0 +1,132 @@
+[
+  {
+    "id": 1,
+    "name": "Doro Wat",
+    "price": 240,
+    "category": "Ethiopian",
+    "spicy": true,
+    "image": "/images/doro-wat.jpg",
+    "description": "Slow-cooked chicken stew with berbere, butter and Ethiopian spices.",
+    "ingredients": ["Chicken", "Berbere", "Onion", "Niter kibbeh", "Boiled egg"]
+  },
+  {
+    "id": 2,
+    "name": "Shiro",
+    "price": 120,
+    "category": "Ethiopian",
+    "spicy": false,
+    "image": "/images/OIP (1).jpg",
+    "description": "Creamy chickpea stew seasoned with garlic, onion and Ethiopian spices.",
+    "ingredients": ["Chickpea flour", "Garlic", "Onion", "Berbere", "Olive oil"]
+  },
+  {
+    "id": 3,
+    "name": "Tibs",
+    "price": 280,
+    "category": "Ethiopian",
+    "spicy": true,
+    "image": "/images/tibs.jpg",
+    "description": "Tender beef sauteed with peppers, onions and aromatic Ethiopian spices.",
+    "ingredients": ["Beef", "Onion", "Green pepper", "Rosemary", "Spiced butter"]
+  },
+  {
+    "id": 4,
+    "name": "Margherita Pizza",
+    "price": 350,
+    "category": "Pizza",
+    "spicy": false,
+    "image": "/images/margherita.jpg",
+    "description": "Classic pizza with tomato, mozzarella and fresh basil.",
+    "ingredients": ["Pizza dough", "Tomato", "Mozzarella", "Fresh basil"]
+  },
+  {
+    "id": 5,
+    "name": "Beef Burger",
+    "price": 300,
+    "category": "Burgers",
+    "spicy": false,
+    "image": "/images/burger.jpg",
+    "description": "Juicy beef burger served with fresh vegetables and a soft bun.",
+    "ingredients": ["Beef patty", "Bun", "Lettuce", "Tomato", "House sauce"]
+  },
+  {
+    "id": 6,
+    "name": "Mango Juice",
+    "price": 100,
+    "category": "Drinks",
+    "spicy": false,
+    "image": "/images/mango.jpg",
+    "description": "Refreshing mango juice made from ripe sweet mangoes.",
+    "ingredients": ["Fresh mango", "Water", "Lime"]
+  },
+  {
+    "id": 7,
+    "name": "Kitfo",
+    "price": 320,
+    "category": "Ethiopian",
+    "spicy": true,
+    "image": "/images/kitfo.jpg",
+    "description": "A beloved Ethiopian minced beef dish seasoned with mitmita and spiced butter.",
+    "ingredients": ["Beef", "Mitmita", "Niter kibbeh", "Ayib", "Gomen"]
+  },
+  {
+    "id": 8,
+    "name": "Firfir",
+    "price": 180,
+    "category": "Ethiopian",
+    "spicy": true,
+    "image": "/images/firfir.jpg",
+    "description": "Torn injera tossed in a warming berbere and tomato sauce.",
+    "ingredients": ["Injera", "Berbere", "Tomato", "Onion", "Niter kibbeh"]
+  },
+  {
+    "id": 9,
+    "name": "Lemon Mint Cooler",
+    "price": 90,
+    "category": "Drinks",
+    "spicy": false,
+    "image": "/images/lemon-mint.jpg",
+    "description": "A bright, refreshing blend of lemon, mint and a touch of sweetness.",
+    "ingredients": ["Lemon", "Fresh mint", "Water", "Sugar"]
+  },
+  {
+    "id": 10,
+    "name": "Ethiopian Coffee",
+    "price": 75,
+    "category": "Drinks",
+    "spicy": false,
+    "image": "/images/bunna.jpg",
+    "description": "Freshly brewed Ethiopian coffee with a rich, aromatic finish.",
+    "ingredients": ["Ethiopian coffee beans", "Water"]
+  },
+  {
+    "id": 11,
+    "name": "Macchiato",
+    "price": 85,
+    "category": "Drinks",
+    "spicy": false,
+    "image": "/images/macchiato.jpg",
+    "description": "A smooth espresso topped with steamed milk, Addis-style.",
+    "ingredients": ["Espresso", "Steamed milk"]
+  },
+  {
+    "id": 12,
+    "name": "Chicken Burger",
+    "price": 270,
+    "category": "Burgers",
+    "spicy": false,
+    "image": "/images/chicken-burger.jpg",
+    "description": "Crispy chicken, fresh vegetables and a creamy sauce in a soft bun.",
+    "ingredients": ["Chicken", "Bun", "Lettuce", "Tomato", "Creamy sauce"]
+  },
+  {
+    "id": 13,
+    "name": "Pepperoni Pizza",
+    "price": 390,
+    "category": "Pizza",
+    "spicy": false,
+    "image": "/images/pepperoni.jpg",
+    "description": "Golden pizza topped with tomato, melted cheese and pepperoni.",
+    "ingredients": ["Pizza dough", "Tomato", "Mozzarella", "Pepperoni"]
+  }
+]
