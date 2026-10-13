@@ -8,6 +8,12 @@ export async function getSession() {
   return verifySessionToken(cookieStore.get(SESSION_COOKIE)?.value);
 }
 
+export async function getUser() {
+  const session = await getSession();
+  if (!session) return null;
+  return { id: session.userId, email: session.email, role: session.role };
+}
+
 export async function setSession(user) {
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE, await createSessionToken(user), {

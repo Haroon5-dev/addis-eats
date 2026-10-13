@@ -3,7 +3,7 @@ import "./globals.css";
 import Providers from "./providers.jsx";
 import CartNavLink from "./cart/CartNavLink.jsx";
 import ThemeToggle from "./ThemeToggle.jsx";
-import { getSession } from "../lib/session.js";
+import { getUser } from "../lib/session.js";
 import { signOut } from "./actions.js";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -27,7 +27,7 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  const session = await getSession();
+  const user = await getUser();
   return (
     <html
       lang="en"
@@ -45,11 +45,11 @@ export default async function RootLayout({ children }) {
               <Link href="/menu">Menu</Link>
               <CartNavLink />
               <Link href="/favorites">Favorites</Link>
-              {session ? <Link href="/orders">Orders</Link> : null}
+              {user ? <Link href="/orders">Orders</Link> : null}
               <Link href="/checkout">Checkout</Link>
-              {session ? (
+              {user ? (
                 <form action={signOut} className="nav-auth-form">
-                  <span className="nav-user">{session.email}</span>
+                  <span className="nav-user">{user.email}</span>
                   <button type="submit" className="nav-signout">Sign out</button>
                 </form>
               ) : (

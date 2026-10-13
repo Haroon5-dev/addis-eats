@@ -11,11 +11,11 @@
   },
   {
     "id": 2,
-    "name": "Shiro",
+    "name": "Firfir",
     "price": 120,
     "category": "Ethiopian",
     "spicy": false,
-    "image": "/images/OIP (1).jpg",
+    "image": "/images/firfir.jpg",
     "description": "Creamy chickpea stew seasoned with garlic, onion and Ethiopian spices.",
     "ingredients": ["Chickpea flour", "Garlic", "Onion", "Berbere", "Olive oil"]
   },
