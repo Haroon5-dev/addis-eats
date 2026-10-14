@@ -127,7 +127,7 @@ export async function placeOrder(previousState, formData) {
 
   const session = await getSession();
   if (!session) return { status: "error", fieldErrors: {}, message: "Please sign in before placing an order." };
-  const order = createOrder({
+  const order = await createOrder({
     ...parsed.data,
     ownerId: session.userId,
   });
@@ -142,7 +142,7 @@ export async function placeOrder(previousState, formData) {
 export async function cancelOrder(orderId) {
   const session = await getSession();
   if (!session) return { status: "error", code: "UNAUTHENTICATED", message: "Please sign in." };
-  const order = getOrder(orderId);
+  const order = await getOrder(orderId);
 
   if (!order) {
     return {
@@ -176,7 +176,14 @@ export async function cancelOrder(orderId) {
     };
   }
 
-  const cancelled = cancelStoredOrder(order.id);
+  const cancelled = await cancelStoredOrder(order.id);
+  if (!cancelled) {
+    return {
+      status: "error",
+      code: "INVALID_STATUS",
+      message: "The order status changed before cancellation. Refresh the page and try again.",
+    };
+  }
 
   return {
     status: "success",

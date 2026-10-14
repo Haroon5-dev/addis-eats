@@ -28,7 +28,7 @@ export default async function OrdersPage() {
   const session = await getSession();
   if (!session) redirect("/signin?next=%2Forders");
 
-  const orders = getOrdersForOwner(session.userId);
+  const orders = await getOrdersForOwner(session.userId);
   const dishes = getDishes();
 
   return (

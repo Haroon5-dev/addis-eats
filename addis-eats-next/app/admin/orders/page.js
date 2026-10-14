@@ -33,7 +33,7 @@ export default async function AdminOrdersPage({ searchParams }) {
   const session = await getSession();
   if (!session || session.role !== "staff") redirect("/forbidden");
   const params = await searchParams;
-  const orders = getAllOrders();
+  const orders = await getAllOrders();
 
   return (
     <AdminShell user={session} active="orders">
@@ -47,8 +47,8 @@ export default async function AdminOrdersPage({ searchParams }) {
       </header>
 
       <div className="admin-data-note" role="note">
-        <strong>Order data is stored locally</strong>
-        <span>Changes are written to an ignored JSON file on this machine. This storage is for local development only, not multi-user or production hosting.</span>
+        <strong>Shared order storage</strong>
+        <span>Production orders are saved in the configured database so checkout, order tracking, and staff updates can share the same records.</span>
       </div>
 
       {params?.error ? <p className="admin-feedback admin-feedback-error" role="alert">{params.error}</p> : null}

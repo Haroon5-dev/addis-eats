@@ -1,5 +1,11 @@
 # Addis Eats data-fetching decisions
 
+## Order persistence
+
+In development without `DATABASE_URL`, order records use `data/orders.json`. In production, `DATABASE_URL` is required and order reads/writes use the Neon Postgres `addis_eats_orders` table. The application creates the table and owner/date index on first use. Keep the Neon connection string private and set it in Vercel Project Settings → Environment Variables for each deployed environment, then redeploy. Checkout, tracking, order history, kitchen, and admin workflows all use this shared order store.
+
+The menu continues to use the local JSON catalogue. Vercel's filesystem is not durable, so production menu edits still require moving that catalogue to shared storage.
+
 ## Shared fetcher (`lib/fetcher.js`)
 All SWR requests use one JSON fetcher. It parses the response, checks `response.ok`, and throws a useful error for non-2xx responses. A successful response with malformed JSON also throws, so SWR exposes failures through `error` instead of treating an invalid payload as successful data.
 
@@ -21,7 +27,7 @@ All SWR requests use one JSON fetcher. It parses the response, checks `response.
 - **`dedupingInterval: 1000`.** Avoids duplicate requests close together while keeping the status fresh.
 - **`revalidateOnFocus: true`.** A returning customer gets a fresh status when switching back to the tracking tab.
 - **`keepPreviousData: true`.** The last known status stays on screen during revalidation or a transient request failure.
-- The order API verifies session ownership and returns `404` for missing or foreign orders. Local order JSON persists across restarts on one development machine, but is not shared between instances or suitable for production hosting.
+- The order API verifies session ownership and returns `404` for missing or foreign orders. Production records are stored in the shared Neon database; local JSON is only used for development without `DATABASE_URL`.
 
 ## Pagination and API
 `GET /api/dishes` accepts `search`, `category`, `page`, and `limit`. The server filters by category and text first, clamps page and limit, then slices results and returns pagination metadata. The default page size is 4 and the maximum is 12 to keep responses bounded. Responses use `Cache-Control: no-store` because the route currently represents demo menu data and there is no shared cache invalidation strategy.
@@ -32,7 +38,7 @@ Favorites are persisted under the browser localStorage key `addis-eats-favorites
 
 ## Order history (`app/orders/page.js`)
 
-The server reads the signed-in session and calls `getOrdersForOwner(userId)` against the local JSON order store. The page is `force-dynamic`, has no shared cache, and never accepts an owner ID from a browser query parameter. Its empty state means there are no orders owned by the active session in the local store. Records are not shared between machines or application instances.
+The server reads the signed-in session and calls `getOrdersForOwner(userId)` against the shared production database or the local development JSON store. The page is `force-dynamic`, has no shared cache, and never accepts an owner ID from a browser query parameter.
 
 ## Cart and reorder
 

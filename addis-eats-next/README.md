@@ -13,7 +13,7 @@ A responsive food-ordering demo for Addis Ababa built with the Next.js App Route
 - Server-side signed sessions and staff/kitchen route authorization.
 - Responsive layout, keyboard focus indication, reduced-motion support, Next.js image optimization, sitemap, and robots metadata.
 
-The demo's order store is in process memory; orders are not durable across restarts or synchronized between instances. Favorites/cart are local to the browser. This is not a production multi-user database.
+Production orders are stored in Neon Postgres through `DATABASE_URL`; local development falls back to ignored JSON files. Favorites/cart are local to the browser. The menu catalogue still uses local files and menu edits are not durable on Vercel.
 
 ## Stack
 
@@ -50,7 +50,7 @@ Open `http://localhost:3000`.
 
 ## Environment variables
 
-`.env.example` documents demo variables. `.env.local` is excluded by `.gitignore`; never commit actual credentials or session secrets. Admin access requires `STAFF_EMAIL`, `STAFF_PASSWORD`, and `AUTH_SECRET`; `AUTH_EMAIL` and `AUTH_PASSWORD` configure customer sign-in. For Vercel, set the variables under **Project Settings → Environment Variables** for the deployment environment and redeploy afterward. `.env.local` only configures local development. Set `NEXT_PUBLIC_SITE_URL` to the real origin when deployed.
+`.env.example` documents demo variables. `.env.local` is excluded by `.gitignore`; never commit actual credentials or session secrets. Admin access requires `STAFF_EMAIL`, `STAFF_PASSWORD`, and `AUTH_SECRET`; `AUTH_EMAIL` and `AUTH_PASSWORD` configure customer sign-in. Production order storage also requires the Neon connection string in `DATABASE_URL`. For Vercel, set the variables under **Project Settings → Environment Variables** for the deployment environment and redeploy afterward. `.env.local` only configures local development. Set `NEXT_PUBLIC_SITE_URL` to the real origin when deployed.
 
 This demo compares configured credentials server-side; it is not a registration system or production identity provider. Use a proper identity provider and hashed credential storage before production deployment.
 
@@ -58,7 +58,7 @@ This demo compares configured credentials server-side; it is not a registration 
 
 Sign in with `STAFF_EMAIL` and `STAFF_PASSWORD`, then choose **Admin dashboard** from the site navigation or open `/admin`. The dashboard includes an order-value-by-neighborhood ETB bar chart, a seven-day order-count line chart, matching data tables, and a paginated order table with URL-based sorting. Because payments are not integrated, order totals are not verified revenue. Staff can review and advance orders, edit the menu, and see summaries for customers who have placed orders. Kitchen-role accounts have access only to the kitchen route.
 
-During local development, order records and edited menu data are saved under `data/orders.json` and `data/menu.json`. These files are ignored by Git. This storage is for a single local development server only: it is not suitable for production, serverless hosting, multiple instances, or concurrent writes. Configure a shared database before deployment. Customer summaries come from order records; this demo does not have registered customer profiles, payment verification, or verified revenue analytics.
+During local development without `DATABASE_URL`, orders and edited menu data are saved under `data/orders.json` and `data/menu.json`. Production orders use the configured Neon database; menu data remains local JSON and its edits are not durable on Vercel. Customer summaries come from order records; this demo does not have registered customer profiles, payment verification, or verified revenue analytics.
 
 The admin dashboard provides development-only state previews at `/admin?preview=loading`, `/admin?preview=empty`, and `/admin?preview=error`. These are disabled outside development.
 

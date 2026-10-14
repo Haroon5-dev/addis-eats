@@ -7,9 +7,9 @@ export async function GET(_request, { params }) {
   const { id } = await params;
   const session = await getSession();
   if (!session) return Response.json({ error: { code: "UNAUTHENTICATED", message: "Please sign in." } }, { status: 401 });
-  const order = getOrder(id);
+  const order = await getOrder(id);
   if (!order) {
-    return Response.json({ error: { code: "ORDER_NOT_FOUND", message: "Order not found or this server no longer has the order." } }, { status: 404 });
+    return Response.json({ error: { code: "ORDER_NOT_FOUND", message: "Order not found." } }, { status: 404 });
   }
 
   if (order.ownerId !== session.userId) {

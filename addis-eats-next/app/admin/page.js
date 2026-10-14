@@ -28,7 +28,7 @@ export default async function AdminPage({ searchParams }) {
   if (previewState === "error") throw new Error("Development preview: admin dashboard error state.");
   if (previewState === "loading") await new Promise((resolve) => setTimeout(resolve, 1200));
 
-  const orders = previewState === "empty" ? [] : getAllOrders();
+  const orders = previewState === "empty" ? [] : await getAllOrders();
   const dishes = getDishes();
   const pendingOrders = orders.filter((order) => ["pending", "confirmed", "preparing", "ready", "out_for_delivery"].includes(order.status)).length;
   const cancelledOrders = orders.filter((order) => order.status === "cancelled").length;
@@ -47,8 +47,8 @@ export default async function AdminPage({ searchParams }) {
       </header>
 
       <div className="admin-data-note" role="note">
-        <strong>Development data</strong>
-        <span>Orders and menu edits use local JSON files. Order totals are not verified payment revenue; payment records and financial reporting are not configured.</span>
+        <strong>Order storage</strong>
+        <span>Orders use the configured shared database in production and local JSON during development. Order totals are not verified payment revenue; payment records and financial reporting are not configured.</span>
       </div>
 
       {process.env.NODE_ENV === "development" ? (

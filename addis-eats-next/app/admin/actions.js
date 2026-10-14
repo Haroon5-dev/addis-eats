@@ -30,7 +30,7 @@ export async function updateAdminOrderStatus(formData) {
   if (session.role === "kitchen" && !["preparing", "ready"].includes(status)) {
     redirect("/forbidden");
   }
-  const result = updateOrderStatus(id, status, session.email);
+  const result = await updateOrderStatus(id, status, session.email);
 
   revalidatePath("/admin");
   revalidatePath("/admin/orders");
@@ -96,7 +96,7 @@ export async function deleteDishAction(formData) {
   const dish = dishes.find((item) => item.id === dishId);
   if (!dish) redirect("/admin/menu?error=Dish%20not%20found");
 
-  const isOrdered = getAllOrders().some((order) => order.items.some((item) => Number(item.id) === dishId));
+  const isOrdered = (await getAllOrders()).some((order) => order.items.some((item) => Number(item.id) === dishId));
   if (isOrdered) {
     saveDishes(dishes.map((item) => item.id === dishId ? { ...item, available: false } : item));
   } else {

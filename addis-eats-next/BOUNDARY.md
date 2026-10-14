@@ -22,19 +22,19 @@
 | `app/favorites/page.jsx` | Client Component | Favorites Zustand store | Browse/remove saved dishes | The page data is browser-local rather than account-backed. |
 | `app/checkout/page.js` | Server Component | Reads session via middleware and server helper | Renders form | Private route gating belongs on the server. |
 | `app/checkout/CheckoutForm.jsx` | Client Component | Form and cart state; Server Action owns final validation | Submit, pending state, redirect | Native form interaction and cart serialization need client code, but trusted order creation stays server-side. |
-| `app/actions.js` | Server Actions | Session helper, Zod schema, local catalogue, order store | Sign-in/out, create/cancel order | Mutations, secrets, prices, and ownership checks must not reach the browser. |
+| `app/actions.js` | Server Actions | Session helper, Zod schema, local catalogue, shared production/local development order store | Sign-in/out, create/cancel order | Mutations, secrets, prices, and ownership checks must not reach the browser. |
 | `app/orders/[id]/page.js` | Server Component | Session plus owner-checked order store | Seeds status poller | Enforces access and supplies immediate private data. |
 | `app/orders/[id]/OrderStatusPoller.jsx` | Client Component | SWR cache seeded from the server | Five-second polling while active | Polling is a browser lifecycle concern; server data prevents a loading flash. |
-| `app/orders/page.js` | Dynamic Server Component | Session and server-filtered local JSON orders | Links to tracking and passes owned items to reorder | Private order history must be filtered before rendering. |
+| `app/orders/page.js` | Dynamic Server Component | Session and server-filtered shared production/local development orders | Links to tracking and passes owned items to reorder | Private order history must be filtered before rendering. |
 | `app/orders/ReorderButton.jsx` | Client Component | Cart Zustand store | Adds prior line items to cart | Reordering is a browser cart mutation. |
 | `app/signin/page.js` | Server Component | Validates return destination and current session | Renders sign-in form | Redirect decisions and session reads belong on the server. |
 | `app/signin/SignInForm.jsx` | Client Component | Server Action state | Sign-in submission and errors | Uses pending state without moving credential checks client-side. |
 | `app/api/**/route.js` | Route Handler | Server catalogue, session, validation, and order store | JSON requests | HTTP endpoints are explicit trust and authorization boundaries. |
 | `middleware.js` | Request interception | Signed session token and pathname | Redirects unauthenticated or unauthorized requests | Narrowly gates private route families; handlers still repeat authorization. |
-| `app/admin/orders` | Dynamic Server Component and Server Action | Staff role and local JSON orders | Safe workflow transitions, history, and empty state | Mutations and role checks stay server-side. |
+| `app/admin/orders` | Dynamic Server Component and Server Action | Staff role and shared production/local development orders | Safe workflow transitions, history, and empty state | Mutations and role checks stay server-side. |
 | `app/admin/menu` | Dynamic Server Components and Server Actions | Staff role and local JSON catalogue | Create, edit, availability, remove/archive | Changes flow through the public menu and checkout. |
 | `app/admin/customers` | Dynamic Server Component | Staff role and order-derived summaries | Empty state and order summaries | There is no registered customer database. |
-| `app/staff/kitchen` | Dynamic Server Component and Server Action | Staff/kitchen role and local JSON orders | Kitchen queue and preparation status transitions | Kitchen accounts can only advance preparation steps. |
+| `app/staff/kitchen` | Dynamic Server Component and Server Action | Staff/kitchen role and shared production/local development orders | Kitchen queue and preparation status transitions | Kitchen accounts can only advance preparation steps. |
 
 ## State and trust ownership
 
@@ -43,7 +43,7 @@
 - Cart persistence is browser-local demo state and is not an authenticated account cart.
 - Theme selection is browser-local and retains the red/gold brand colors in both modes.
 - Server Components may read cookies but do not modify them; sign-in and sign-out mutate cookies in Server Actions.
-- Orders and catalogue edits use ignored local JSON files. They persist across local development restarts but are not shared between machines or suitable for production hosting.
+- Production orders use Neon Postgres; local development orders and catalogue edits can use ignored JSON files. Menu edits are not shared between machines or suitable for production hosting.
 - Favorites remain localStorage demo data; customer summaries are derived from order contacts rather than registered account profiles.
 - Admin routes and Server Actions enforce staff/kitchen role boundaries on the server.
 

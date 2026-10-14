@@ -33,7 +33,7 @@ function getCustomerSummaries(orders) {
 export default async function AdminCustomersPage() {
   const session = await getSession();
   if (!session || session.role !== "staff") redirect("/forbidden");
-  const customers = getCustomerSummaries(getAllOrders());
+  const customers = getCustomerSummaries(await getAllOrders());
 
   return (
     <AdminShell user={session} active="customers">

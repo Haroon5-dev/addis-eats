@@ -24,7 +24,7 @@ export default async function KitchenPage({ searchParams }) {
   if (!session || !["staff", "kitchen"].includes(session.role)) redirect("/forbidden");
 
   const params = await searchParams;
-  const orders = getAllOrders().filter((order) => ["pending", "confirmed", "preparing", "ready"].includes(order.status));
+  const orders = (await getAllOrders()).filter((order) => ["pending", "confirmed", "preparing", "ready"].includes(order.status));
   const kitchenRole = session.role === "kitchen";
 
   return (

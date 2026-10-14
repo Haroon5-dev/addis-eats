@@ -19,7 +19,7 @@
 
 For a Vercel deployment, add the variables in **Project Settings → Environment Variables** and select the environment(s) where the deployment runs. Admin sign-in specifically requires `STAFF_EMAIL`, `STAFF_PASSWORD`, and `AUTH_SECRET`; `AUTH_EMAIL` / `AUTH_PASSWORD` are for customer sign-in and do not grant admin access. Redeploy after changing variables because existing deployments do not pick up newly added environment values. Keep passwords and `AUTH_SECRET` private, and do not use `.env.local` as the mechanism for configuring Vercel.
 
-This project uses environment-configured accounts to demonstrate authentication without a user database. Staff accounts can access `/admin`; kitchen accounts are limited to the kitchen queue and preparation status changes. For a public production service, connect a user database, hash passwords with Argon2id or bcrypt, add rate limiting and audit logging, and replace local JSON order/menu storage with a shared database. Local JSON is development-only and unsuitable for multi-instance production deployment.
+This project uses environment-configured accounts to demonstrate authentication without a user database. Staff accounts can access `/admin`; kitchen accounts are limited to the kitchen queue and preparation status changes. Production orders use the shared Neon database configured through `DATABASE_URL`; the menu catalogue still uses local JSON and is not durable on multi-instance production hosting. For a public production service, connect a user database, hash passwords with Argon2id or bcrypt, and add rate limiting and audit logging.
 
 ## Session security
 

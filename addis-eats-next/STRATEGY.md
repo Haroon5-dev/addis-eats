@@ -2,7 +2,7 @@
 
 ## Existing architecture
 
-The project uses the Next.js 16 App Router, JavaScript, React Server Components, Route Handlers, Server Actions, Tailwind CSS 4, Zustand, Zod, and SWR. Menu seed data and photography are local files under `public/`; staff edits and orders are persisted in ignored local JSON for single-machine development only. Signed sessions use HTTP-only cookies. Replace the local JSON data layer with a shared database before deployment.
+The project uses the Next.js 16 App Router, JavaScript, React Server Components, Route Handlers, Server Actions, Tailwind CSS 4, Zustand, Zod, and SWR. Menu seed data and photography are local files under `public/`; orders use Neon Postgres via `DATABASE_URL` in production and ignored local JSON in development. Menu edits still use local JSON. Signed sessions use HTTP-only cookies.
 
 The established visual theme is Addis Eats red (`#b5121b`), gold (`#f4c430`), and warm cream; route work should extend these tokens rather than introducing a replacement palette.
 
@@ -18,16 +18,16 @@ The established visual theme is Addis Eats red (`#b5121b`), gold (`#f4c430`), an
 | `/checkout` | Server page shell plus client form and Server Action | Customer session | Middleware redirect; field-level validation and action errors | The server must revalidate identity, prices, and order input. |
 | `/orders/[id]` | Server Component seed plus SWR poller | Customer session and owner check | `notFound()` for unknown or foreign orders; seeded first paint | The server enforces privacy; the client only refreshes status. |
 | `/favorites` | Client Component; Zustand/localStorage favorites | Public; browser-local | Hydration message and friendly empty state | Favorites are personal browser demo state and do not need server authorization. |
-| `/orders` | Dynamic Server Component; owner-filtered local JSON order store | Customer session | Middleware redirect; owner-only order list and empty state | Order history must be filtered on the server and never sent across accounts. |
+| `/orders` | Dynamic Server Component; owner-filtered shared production database or local development JSON | Customer session | Middleware redirect; owner-only order list and empty state | Order history must be filtered on the server and never sent across accounts. |
 | `/signin` | Server page plus client sign-in form and Server Action | Public | Inline configuration/credential errors | Credentials and session creation must remain server-side. |
 | `/api/dishes` | Route Handler; local JSON catalogue; no-store responses | Public | Structured paginated JSON | Search and pagination need a bounded, consistent API contract. |
 | `/api/dishes/[id]` | Route Handler; local JSON catalogue | Public | 404 JSON for unknown IDs | Provides an explicit single-dish endpoint. |
 | `/api/orders` | Route Handler; server validation and order store | Customer session for creation | Explicit validation/authentication errors | The browser must not control trusted prices, totals, or ownership. |
 | `/api/orders/[id]` | Route Handler; owner-scoped read | Customer session plus order ownership | 404 for unknown or foreign orders | Avoids disclosing another customer's order existence or status. |
-| `/admin` and `/admin/orders` | Dynamic Server Components and Server Actions; local JSON | Staff role | Addis Ababa seven-day charts, accessible chart data tables, URL-sorted pagination, safe order transitions, empty/loading/error states | Aggregation stays server-side; payment-unverified order totals are not presented as confirmed revenue. |
+| `/admin` and `/admin/orders` | Dynamic Server Components and Server Actions; shared production database or local development JSON | Staff role | Addis Ababa seven-day charts, accessible chart data tables, URL-sorted pagination, safe order transitions, empty/loading/error states | Aggregation stays server-side; payment-unverified order totals are not presented as confirmed revenue. |
 | `/admin/menu` | Dynamic Server Components and Server Actions; local JSON catalogue | Staff role | Create, edit, remove/archive, and availability controls | Staff changes are reflected in the customer menu and checkout. |
 | `/admin/customers` | Dynamic Server Component; summaries derived from orders | Staff role | Empty state and order-derived summaries | No registered-customer database exists. |
-| `/staff/kitchen` | Dynamic Server Component; local JSON order queue | Staff or kitchen role | Kitchen view with preparation status changes | Kitchen role is limited to preparation steps. |
+| `/staff/kitchen` | Dynamic Server Component; shared production database or local development JSON order queue | Staff or kitchen role | Kitchen view with preparation status changes | Kitchen role is limited to preparation steps. |
 
 ## Data and rendering rules
 
@@ -36,8 +36,8 @@ The established visual theme is Addis Eats red (`#b5121b`), gold (`#f4c430`), an
 - Keep persisted cart state in Zustand and do not make the root layout a Client Component.
 - Use Next.js `Image` for local food imagery, reserve image space, and prioritize only the home hero image.
 - Use the existing system font stack; it avoids an external font request and does not require a build-time Google Fonts download.
-- Treat local JSON orders and menu edits as development-only until a shared database is introduced.
+- Use the shared production database for orders; treat local JSON orders and menu edits as development-only.
 
 ## Current scope note
 
-The customer homepage, dynamic local catalogue, menu filtering/pagination, favorites, and local JSON order history exist. Staff can manage orders and menu items and inspect order-derived customer summaries. Local JSON is not production storage; payment processing and registered customer accounts are not implemented.
+The customer homepage, dynamic local catalogue, menu filtering/pagination, favorites, and persistent production order history exist. Staff can manage orders and menu items and inspect order-derived customer summaries. Menu edits remain local JSON and are not durable on Vercel; payment processing and registered customer accounts are not implemented.

@@ -10,7 +10,7 @@ export default async function OrderPage({ params }) {
   const { id } = await params;
   const session = await getSession();
   if (!session) redirect(`/signin?next=${encodeURIComponent(`/orders/${id}`)}`);
-  const order = getOrder(id);
+  const order = await getOrder(id);
   if (!order) notFound();
 
   

@@ -35,7 +35,7 @@ export default async function AdminOrderDetailsPage({ params, searchParams }) {
 
   const { id } = await params;
   const query = await searchParams;
-  const order = getOrder(id);
+  const order = await getOrder(id);
   if (!order) notFound();
 
   const nextStatuses = ORDER_STATUS_TRANSITIONS[order.status] ?? [];

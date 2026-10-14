@@ -86,7 +86,7 @@ export async function POST(request) {
 
   const session = await getSession();
   if (!session) return Response.json({ error: { code: "UNAUTHENTICATED", message: "Please sign in before placing an order." } }, { status: 401 });
-  const order = createOrder({
+  const order = await createOrder({
     ...parsed.data,
     ownerId: session.userId,
   });
