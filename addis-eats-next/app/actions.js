@@ -17,28 +17,39 @@ function safeNext(value) {
 export async function signIn(_previousState, formData) {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
-  const accounts = [
+  const next = safeNext(formData.get("next"));
+  const isAdminSignIn = next === "/admin" || next.startsWith("/admin/");
+  const configuredAccounts = [
     { email: process.env.AUTH_EMAIL, password: process.env.AUTH_PASSWORD, role: "customer" },
     { email: process.env.STAFF_EMAIL, password: process.env.STAFF_PASSWORD, role: "staff" },
     { email: process.env.KITCHEN_EMAIL, password: process.env.KITCHEN_PASSWORD, role: "kitchen" },
   ].filter((account) => account.email && account.password);
+  const accounts = isAdminSignIn
+    ? configuredAccounts.filter((account) => account.role === "staff")
+    : configuredAccounts;
+
   if (accounts.length === 0) {
     return {
       status: "error",
-      message: "Sign-in is not configured yet. Add AUTH_EMAIL and AUTH_PASSWORD (and AUTH_SECRET) to .env.local, then restart the development server.",
+      message: isAdminSignIn
+        ? "Admin sign-in is not configured for this deployment. Set STAFF_EMAIL, STAFF_PASSWORD, and AUTH_SECRET in Vercel Project Settings > Environment Variables for the Production environment, then redeploy. For local development, set them in .env.local and restart the server."
+        : "Sign-in is not configured for this deployment. Set AUTH_EMAIL and AUTH_PASSWORD, plus AUTH_SECRET, in the hosting provider's environment variables and redeploy. For local development, set them in .env.local and restart the server.",
     };
   }
 
   const account = accounts.find((entry) => entry.email.toLowerCase() === email && entry.password === password);
 
-  if (!account) return { status: "error", message: "Email or password is incorrect. Use the account credentials configured in .env.local." };
+  if (!account) return { status: "error", message: "Email or password is incorrect. Use the credentials configured for this account." };
 
   if (!process.env.AUTH_SECRET || process.env.AUTH_SECRET.length < 32) {
-    return { status: "error", message: "Sign-in setup is incomplete: AUTH_SECRET must be at least 32 characters in .env.local. Restart the development server after updating it." };
+    return {
+      status: "error",
+      message: "Sign-in setup is incomplete: AUTH_SECRET must be at least 32 characters. Set it in the hosting provider's environment variables and redeploy, or set it in .env.local and restart the local server.",
+    };
   }
 
   await setSession({ userId: email, id: email, email, role: account.role });
-  redirect(safeNext(formData.get("next")));
+  redirect(next);
 }
 
 export async function signOut() {

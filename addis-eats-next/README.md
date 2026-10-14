@@ -50,7 +50,7 @@ Open `http://localhost:3000`.
 
 ## Environment variables
 
-`.env.example` documents required demo variables. `.env.local` is excluded by `.gitignore`; never commit actual credentials or session secrets. Configure at least `AUTH_SECRET`, `AUTH_EMAIL`, and `AUTH_PASSWORD`; optional staff and kitchen roles use their corresponding `STAFF_*` and `KITCHEN_*` variables. Set `NEXT_PUBLIC_SITE_URL` to the real origin only when deployed.
+`.env.example` documents demo variables. `.env.local` is excluded by `.gitignore`; never commit actual credentials or session secrets. Admin access requires `STAFF_EMAIL`, `STAFF_PASSWORD`, and `AUTH_SECRET`; `AUTH_EMAIL` and `AUTH_PASSWORD` configure customer sign-in. For Vercel, set the variables under **Project Settings → Environment Variables** for the deployment environment and redeploy afterward. `.env.local` only configures local development. Set `NEXT_PUBLIC_SITE_URL` to the real origin when deployed.
 
 This demo compares configured credentials server-side; it is not a registration system or production identity provider. Use a proper identity provider and hashed credential storage before production deployment.
 
