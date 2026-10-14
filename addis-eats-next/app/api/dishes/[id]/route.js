@@ -1,10 +1,12 @@
-import dishes from "../../../../public/dishes.json";
+import { getDish } from "../../../../lib/menu.js";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(request, { params }) {
   const { id } = await params;
-  const dish = dishes.find((item) => String(item.id) === String(id));
+  const dish = getDish(id);
 
-  if (!dish) {
+  if (!dish || !dish.available) {
     return Response.json(
       {
         error: {
@@ -16,5 +18,5 @@ export async function GET(request, { params }) {
     );
   }
 
-  return Response.json({ dish });
+  return Response.json({ dish }, { headers: { "Cache-Control": "no-store" } });
 }

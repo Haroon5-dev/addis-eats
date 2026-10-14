@@ -17,11 +17,11 @@ All SWR requests use one JSON fetcher. It parses the response, checks `response.
 ## Order status (`app/orders/[id]/OrderStatusPoller.jsx`)
 - **Key:** `/api/orders/<encoded order id>`; the ID identifies one order resource.
 - **`fallbackData`:** the server-rendered order provides immediate status and item details before the first browser request completes.
-- **`refreshInterval`: 5000 ms while pending, 0 otherwise.** Five seconds provides visible progress without excessive polling. Polling stops once the order is no longer pending.
+- **`refreshInterval`: 5000 ms while active, 0 after delivery or cancellation.** Five seconds provides visible progress without excessive polling. Polling stops for terminal statuses.
 - **`dedupingInterval: 1000`.** Avoids duplicate requests close together while keeping the status fresh.
 - **`revalidateOnFocus: true`.** A returning customer gets a fresh status when switching back to the tracking tab.
 - **`keepPreviousData: true`.** The last known status stays on screen during revalidation or a transient request failure.
-- The order API verifies session ownership and returns `404` for missing or foreign orders. The current in-memory order store is development/demo persistence only; restarting the server clears orders.
+- The order API verifies session ownership and returns `404` for missing or foreign orders. Local order JSON persists across restarts on one development machine, but is not shared between instances or suitable for production hosting.
 
 ## Pagination and API
 `GET /api/dishes` accepts `search`, `category`, `page`, and `limit`. The server filters by category and text first, clamps page and limit, then slices results and returns pagination metadata. The default page size is 4 and the maximum is 12 to keep responses bounded. Responses use `Cache-Control: no-store` because the route currently represents demo menu data and there is no shared cache invalidation strategy.
@@ -32,8 +32,8 @@ Favorites are persisted under the browser localStorage key `addis-eats-favorites
 
 ## Order history (`app/orders/page.js`)
 
-The server reads the signed-in session and calls `getOrdersForOwner(userId)` against the process-local order map. The page is `force-dynamic`, has no shared cache, and never accepts an owner ID from a browser query parameter. Its empty state means there are no orders owned by the active session in this process. Records are lost when the server process restarts and are not shared between multiple application instances.
+The server reads the signed-in session and calls `getOrdersForOwner(userId)` against the local JSON order store. The page is `force-dynamic`, has no shared cache, and never accepts an owner ID from a browser query parameter. Its empty state means there are no orders owned by the active session in the local store. Records are not shared between machines or application instances.
 
 ## Cart and reorder
 
-Cart items persist through Zustand localStorage under `addis-eats-cart`; the browser calculates the display subtotal from the stored items. Checkout Server Actions ignore submitted prices and names and recalculate against `public/dishes.json`. Reorder copies prior server-owned line items into the local cart store; checkout again resolves current catalogue prices before saving.
+Cart items persist through Zustand localStorage under `addis-eats-cart`; the browser calculates the display subtotal from the stored items. Checkout Server Actions ignore submitted prices and names and recalculate against the current local menu catalogue, seeded from `public/dishes.json`. Reorder copies prior server-owned line items into the local cart store; checkout again resolves current catalogue prices and availability before saving.

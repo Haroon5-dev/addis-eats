@@ -54,6 +54,14 @@ Open `http://localhost:3000`.
 
 This demo compares configured credentials server-side; it is not a registration system or production identity provider. Use a proper identity provider and hashed credential storage before production deployment.
 
+## Staff workspace
+
+Sign in with `STAFF_EMAIL` and `STAFF_PASSWORD`, then choose **Admin dashboard** from the site navigation or open `/admin`. The dashboard includes an order-value-by-neighborhood ETB bar chart, a seven-day order-count line chart, matching data tables, and a paginated order table with URL-based sorting. Because payments are not integrated, order totals are not verified revenue. Staff can review and advance orders, edit the menu, and see summaries for customers who have placed orders. Kitchen-role accounts have access only to the kitchen route.
+
+During local development, order records and edited menu data are saved under `data/orders.json` and `data/menu.json`. These files are ignored by Git. This storage is for a single local development server only: it is not suitable for production, serverless hosting, multiple instances, or concurrent writes. Configure a shared database before deployment. Customer summaries come from order records; this demo does not have registered customer profiles, payment verification, or verified revenue analytics.
+
+The admin dashboard provides development-only state previews at `/admin?preview=loading`, `/admin?preview=empty`, and `/admin?preview=error`. These are disabled outside development.
+
 ## Build and checks
 
 ```bash

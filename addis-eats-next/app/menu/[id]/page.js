@@ -1,20 +1,17 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import dishes from "../../../public/dishes.json";
+import { getDish } from "../../../lib/menu.js";
 import { formatCurrency } from "../../../utils/formatCurrency.js";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-const getDish = (id) => dishes.find((item) => String(item.id) === String(id));
 
-export function generateStaticParams() {
-  return dishes.map((dish) => ({ id: String(dish.id) }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
   const dish = getDish(id);
-  if (!dish) return { title: "Dish not found", robots: { index: false, follow: false } };
+  if (!dish || !dish.available) return { title: "Dish not found", robots: { index: false, follow: false } };
 
   const description = `${dish.description} ${dish.name} at Addis Eats for ${dish.price} ETB.`;
   return {
@@ -33,7 +30,7 @@ export async function generateMetadata({ params }) {
 export default async function DishPage({ params }) {
   const { id } = await params;
   const dish = getDish(id);
-  if (!dish) notFound();
+  if (!dish || !dish.available) notFound();
 
   const jsonLd = {
     "@context": "https://schema.org",

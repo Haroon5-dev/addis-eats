@@ -1,9 +1,10 @@
-import dishes from "../../../public/dishes.json";
+import { getDishes } from "../../../lib/menu.js";
 
 const DEFAULT_LIMIT = 4;
 const MAX_LIMIT = 12;
 
 export async function GET(request) {
+  const dishes = getDishes().filter((dish) => dish.available);
   const { searchParams } = new URL(request.url);
   const search = (searchParams.get("search") || "").trim().toLocaleLowerCase();
   const category = (searchParams.get("category") || "").trim().toLocaleLowerCase();

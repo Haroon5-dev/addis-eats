@@ -46,63 +46,122 @@ export default function CheckoutForm() {
 
   if (items.length === 0) {
     return (
-      <section className="empty-state">
-        <p>Your cart is empty.</p>
-        <button type="button" onClick={() => router.push("/menu")}>
-          Browse Menu
-        </button>
+      <section className="checkout-empty">
+        <span className="checkout-empty-icon" aria-hidden="true">▤</span>
+        <h2>Your cart is empty</h2>
+        <p>Add something delicious from the menu to get started.</p>
+        <Link href="/menu" className="checkout-primary-button">Browse the menu</Link>
       </section>
     );
   }
 
   return (
-    <form action={formAction} className="checkout-form">
-      <input type="hidden" name="items" value={JSON.stringify(items)} />
+    <div className="checkout-layout">
+      <form action={formAction} className="checkout-form">
+        <input type="hidden" name="items" value={JSON.stringify(items)} />
 
-      <h2>Delivery details</h2>
+        <section className="checkout-panel checkout-details">
+          <div className="checkout-section-heading">
+            <span className="checkout-step">1</span>
+            <div>
+              <h2>Delivery details</h2>
+              <p>Where should we bring your order?</p>
+            </div>
+          </div>
 
-      <label htmlFor="name">Name</label>
-      <input id="name" name="name" autoComplete="name" required />
-      {state.fieldErrors?.["customer.name"] && (
-        <p className="form-error">{state.fieldErrors["customer.name"]}</p>
-      )}
+          <div className="checkout-fields">
+            <div className="checkout-field">
+              <label htmlFor="name">Full name</label>
+              <input id="name" name="name" autoComplete="name" placeholder="Your name" required aria-invalid={Boolean(state.fieldErrors?.["customer.name"])} />
+              {state.fieldErrors?.["customer.name"] && (
+                <p className="form-error" role="alert">{state.fieldErrors["customer.name"]}</p>
+              )}
+            </div>
 
-      <label htmlFor="telebirr">Telebirr number</label>
-      <input
-        id="telebirr"
-        name="telebirr"
-        inputMode="numeric"
-        placeholder="09XXXXXXXX"
-        required
-      />
-      {state.fieldErrors?.["customer.telebirr"] && (
-        <p className="form-error">{state.fieldErrors["customer.telebirr"]}</p>
-      )}
+            <div className="checkout-field">
+              <label htmlFor="telebirr">Telebirr number</label>
+              <input
+                id="telebirr"
+                name="telebirr"
+                type="tel"
+                inputMode="numeric"
+                autoComplete="tel"
+                placeholder="09XXXXXXXX"
+                required
+                aria-invalid={Boolean(state.fieldErrors?.["customer.telebirr"])}
+              />
+              {state.fieldErrors?.["customer.telebirr"] && (
+                <p className="form-error" role="alert">{state.fieldErrors["customer.telebirr"]}</p>
+              )}
+            </div>
 
-      <label htmlFor="area">Area</label>
-      <input id="area" name="area" required />
-      {state.fieldErrors?.["customer.area"] && (
-        <p className="form-error">{state.fieldErrors["customer.area"]}</p>
-      )}
+            <div className="checkout-field">
+              <label htmlFor="area">Delivery area</label>
+              <input id="area" name="area" autoComplete="address-level2" placeholder="e.g. Bole, Addis Ababa" required aria-invalid={Boolean(state.fieldErrors?.["customer.area"])} />
+              {state.fieldErrors?.["customer.area"] && (
+                <p className="form-error" role="alert">{state.fieldErrors["customer.area"]}</p>
+              )}
+            </div>
 
-      <label htmlFor="notes">Notes (optional)</label>
-      <textarea id="notes" name="notes" rows="3" />
+            <div className="checkout-field">
+              <label htmlFor="notes">Delivery instructions <span>(optional)</span></label>
+              <textarea id="notes" name="notes" rows="4" placeholder="Landmark, gate code, or other helpful details" />
+            </div>
+          </div>
 
-      <div className="checkout-total">
-        <strong>Total: {formatCurrency(total)}</strong>
-      </div>
+          <p className="checkout-private-note"><span aria-hidden="true">▣</span> Your contact details are only used to coordinate this delivery.</p>
+        </section>
 
-      {state.fieldErrors?.items && (
-        <p className="form-error">{state.fieldErrors.items}</p>
-      )}
+        {state.fieldErrors?.items && (
+          <p className="form-error checkout-form-error" role="alert">{state.fieldErrors.items}</p>
+        )}
+        {state.status === "error" && !Object.keys(state.fieldErrors ?? {}).length && (
+          <p className="form-error checkout-form-error" role="alert">Something went wrong. Please try again.</p>
+        )}
 
-      <button type="submit" disabled={pending}>
-        {pending ? "Placing order..." : "Place Order"}
-      </button>
+        <button className="checkout-submit" type="submit" disabled={pending}>
+          {pending ? "Placing your order…" : "Place order"}
+          <span aria-hidden="true">→</span>
+        </button>
+        <p className="checkout-submit-note">You’ll be able to track your order after it’s placed.</p>
+      </form>
 
-      {state.status === "error" && !Object.keys(state.fieldErrors ?? {}).length && (
-        <p className="form-error">Something went wrong. Please try again.</p>
-      )}
-    </form>
+      <aside className="checkout-summary">
+        <div className="checkout-panel checkout-summary-panel">
+          <div className="checkout-section-heading">
+            <span className="checkout-step" aria-hidden="true">2</span>
+            <div>
+              <h2>Your order</h2>
+              <p>{items.reduce((count, item) => count + item.quantity, 0)} items</p>
+            </div>
+          </div>
+
+          <ul className="checkout-items">
+            {items.map((item) => (
+              <li className="checkout-item" key={item.id}>
+                <span className="checkout-item-quantity">{item.quantity}×</span>
+                <span className="checkout-item-name">{item.name}</span>
+                <strong>{formatCurrency(item.price * item.quantity)}</strong>
+              </li>
+            ))}
+          </ul>
+
+          <div className="checkout-cost-row">
+            <span>Food total</span>
+            <strong>{formatCurrency(total)}</strong>
+          </div>
+          <div className="checkout-cost-row checkout-delivery-row">
+            <span>Delivery</span>
+            <span>Confirmed with you</span>
+          </div>
+          <div className="checkout-grand-total">
+            <span>Order total</span>
+            <strong>{formatCurrency(total)}</strong>
+          </div>
+          <p className="checkout-summary-note">Delivery fees, if applicable, will be confirmed before delivery.</p>
+          <Link className="checkout-edit-cart" href="/cart">← Edit your cart</Link>
+        </div>
+      </aside>
+    </div>
   );
 }

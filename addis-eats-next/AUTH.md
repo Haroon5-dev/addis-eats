@@ -17,7 +17,7 @@
 4. Set `NEXT_PUBLIC_SITE_URL` to the real public origin when deploying; use `http://localhost:3000` only for local development.
 5. Restart the development server after changing environment variables.
 
-This project uses environment-configured accounts to demonstrate authentication without a database. For a public production service, connect a user database, hash passwords with Argon2id or bcrypt, add rate limiting and audit logging, and use persistent order storage. The current order store is in-memory and is not suitable for multi-instance production deployment.
+This project uses environment-configured accounts to demonstrate authentication without a user database. Staff accounts can access `/admin`; kitchen accounts are limited to the kitchen queue and preparation status changes. For a public production service, connect a user database, hash passwords with Argon2id or bcrypt, add rate limiting and audit logging, and replace local JSON order/menu storage with a shared database. Local JSON is development-only and unsuitable for multi-instance production deployment.
 
 ## Session security
 

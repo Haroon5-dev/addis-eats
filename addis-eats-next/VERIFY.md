@@ -51,7 +51,7 @@ Expected: `422 Unprocessable Entity`.
 
 ## 6. Client price tampering cannot set the order total
 
-Submit a valid-looking item with an altered price/total. The server resolves the item from `public/dishes.json` and recalculates its price and total before storing the order.
+Submit a valid-looking item with an altered price/total. The server resolves the item from the local menu catalogue (seeded from `public/dishes.json`) and recalculates its price and total before storing the order.
 
 Example:
 

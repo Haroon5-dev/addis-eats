@@ -1,15 +1,18 @@
 import Link from "next/link";
-import dishes from "../../public/dishes.json";
+import { getDishes } from "../../lib/menu.js";
 import SearchBox from "./SearchBox.jsx";
 
 const PAGE_SIZE = 4;
-const CATEGORIES = new Set(["Ethiopian", "Pizza", "Burgers", "Drinks"]);
 const getStringParam = (value) => (typeof value === "string" ? value : "");
 
+export const dynamic = "force-dynamic";
+
 export default async function MenuPage({ searchParams }) {
+  const dishes = getDishes().filter((dish) => dish.available);
   const params = await searchParams;
+  const categories = new Set(dishes.map((dish) => dish.category));
   const requestedCategory = getStringParam(params.category);
-  const category = CATEGORIES.has(requestedCategory) ? requestedCategory : "";
+  const category = categories.has(requestedCategory) ? requestedCategory : "";
   const search = getStringParam(params.search).trim();
   const requestedPage = Number.parseInt(getStringParam(params.page) || "1", 10);
   const categoryDishes = dishes.filter((dish) => !category || dish.category === category);

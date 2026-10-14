@@ -4,7 +4,7 @@ import { getSession } from "../../lib/session.js";
 import { getOrdersForOwner } from "../../lib/orders.js";
 import ReorderButton from "./ReorderButton.jsx";
 import { formatCurrency } from "../../utils/formatCurrency.js";
-import dishes from "../../public/dishes.json";
+import { getDishes } from "../../lib/menu.js";
 
 export const dynamic = "force-dynamic";
 
@@ -14,11 +14,22 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
+const statusLabels = {
+  pending: "Pending",
+  confirmed: "Confirmed",
+  preparing: "Preparing",
+  ready: "Ready for pickup",
+  out_for_delivery: "Out for delivery",
+  delivered: "Delivered",
+  cancelled: "Cancelled",
+};
+
 export default async function OrdersPage() {
   const session = await getSession();
   if (!session) redirect("/signin?next=%2Forders");
 
   const orders = getOrdersForOwner(session.userId);
+  const dishes = getDishes();
 
   return (
     <main className="orders-page">
@@ -40,8 +51,8 @@ export default async function OrdersPage() {
                   Order <strong>{order.id}</strong>
                 </p>
                 <p>
-                  {new Date(order.createdAt).toLocaleString()} ·{" "}
-                  {order.status}
+                  {new Date(order.createdAt).toLocaleString("en-ET", { timeZone: "Africa/Addis_Ababa" })} ·{" "}
+                  {statusLabels[order.status] ?? order.status}
                 </p>
                 <p>{formatCurrency(order.total)}</p>
                 <Link href={`/orders/${encodeURIComponent(order.id)}`}>

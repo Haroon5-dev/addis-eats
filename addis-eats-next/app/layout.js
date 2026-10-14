@@ -47,6 +47,9 @@ export default async function RootLayout({ children }) {
               <Link href="/favorites">Favorites</Link>
               {user ? <Link href="/orders">Orders</Link> : null}
               <Link href="/checkout">Checkout</Link>
+              <Link className="admin-entry-link" href={user?.role === "staff" ? "/admin" : "/admin/login"}>
+                {user?.role === "staff" ? "Admin dashboard" : "Admin sign in"}
+              </Link>
               {user ? (
                 <form action={signOut} className="nav-auth-form">
                   <span className="nav-user">{user.email}</span>

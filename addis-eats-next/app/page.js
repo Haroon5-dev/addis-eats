@@ -1,9 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
-import dishes from "../public/dishes.json";
+import { getDishes } from "../lib/menu.js";
 import { formatCurrency } from "../utils/formatCurrency.js";
 
+export const dynamic = "force-dynamic";
+
 export default function Home() {
+  const dishes = getDishes().filter((dish) => dish.available);
   const specials = [1, 3, 4]
     .map((id) => dishes.find((dish) => dish.id === id))
     .filter(Boolean);

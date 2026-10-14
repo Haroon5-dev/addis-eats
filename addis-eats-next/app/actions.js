@@ -2,10 +2,10 @@
 
 import { redirect } from "next/navigation";
 
-import dishes from "../public/dishes.json";
 import { orderSchema, zodFieldErrors } from "../lib/schema.js";
 import { cancelStoredOrder, createOrder, getOrder } from "../lib/orders.js";
 import { clearSession, getSession, setSession } from "../lib/session.js";
+import { getDishes } from "../lib/menu.js";
 
 
 function safeNext(value) {
@@ -56,8 +56,9 @@ function parseItems(rawItems) {
 
 function buildOrder(formData) {
   const submittedItems = parseItems(formData.get("items"));
+  const dishes = getDishes();
   const unknownItem = submittedItems.find(
-    (item) => !dishes.some((entry) => String(entry.id) === String(item?.id))
+    (item) => !dishes.some((entry) => String(entry.id) === String(item?.id) && entry.available)
   );
 
   if (unknownItem) {
@@ -99,7 +100,7 @@ export async function placeOrder(previousState, formData) {
     return {
       status: "error",
       fieldErrors: {
-        items: `Dish ${candidate.invalidItemId} does not exist.`,
+        items: `Dish ${candidate.invalidItemId} is unavailable or no longer exists.`,
       },
     };
   }

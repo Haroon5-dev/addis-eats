@@ -2,9 +2,10 @@ import { NextResponse } from "next/server";
 import { verifySessionToken, SESSION_COOKIE } from "./lib/session-token.js";
 
 export async function middleware(request) {
-  const session = await verifySessionToken(request.cookies.get(SESSION_COOKIE)?.value);
   const pathname = request.nextUrl.pathname;
+  if (pathname === "/admin/login") return NextResponse.next();
 
+  const session = await verifySessionToken(request.cookies.get(SESSION_COOKIE)?.value);
   if (!session) {
     const signInUrl = new URL("/signin", request.url);
     signInUrl.searchParams.set("next", `${pathname}${request.nextUrl.search}`);
@@ -15,7 +16,11 @@ export async function middleware(request) {
     return NextResponse.redirect(new URL("/forbidden", request.url));
   }
 
+  if (pathname.startsWith("/admin") && session.role !== "staff") {
+    return NextResponse.redirect(new URL("/forbidden", request.url));
+  }
+
   return NextResponse.next();
 }
 
-export const config = { matcher: ["/checkout/:path*", "/orders/:path*", "/staff/kitchen/:path*"] };
+export const config = { matcher: ["/checkout/:path*", "/orders/:path*", "/staff/kitchen/:path*", "/admin", "/admin/:path*"] };

@@ -6,7 +6,7 @@ Set `NEXT_PUBLIC_SITE_URL` in `.env.local` to the canonical public origin (for e
 ## Implemented
 - Root metadata base, title template, default title and description.
 - Dish-specific title, description, canonical URL and Open Graph/Twitter metadata.
-- JSON-LD `MenuItem` data generated from the same `public/dishes.json` record used to render each dish page.
+- JSON-LD `MenuItem` data generated from the same server-side menu catalogue used to render each dish page.
 - Site-wide Open Graph image at `/opengraph-image`.
 - Generated 1200×630 per-dish social images at `/menu/[id]/opengraph-image`.
 - Generated `/sitemap.xml` from actual dish records and public home/menu routes.
