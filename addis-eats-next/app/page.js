@@ -19,8 +19,9 @@ export default function Home() {
           src="/images/Mainhero.jpg"
           alt="Freshly baked pizza topped with tomato, melted cheese and basil"
           fill
-          priority
-          sizes="100vw"
+          preload
+          quality={70}
+          sizes="(max-width: 1361px) 94vw, 1280px"
         />
         <div className="home-hero-shade" />
         <div className="home-hero-content">
