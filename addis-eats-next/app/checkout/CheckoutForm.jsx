@@ -116,7 +116,9 @@ export default function CheckoutForm() {
           <p className="form-error checkout-form-error" role="alert">{state.fieldErrors.items}</p>
         )}
         {state.status === "error" && !Object.keys(state.fieldErrors ?? {}).length && (
-          <p className="form-error checkout-form-error" role="alert">Something went wrong. Please try again.</p>
+          <p className="form-error checkout-form-error" role="alert">
+            {state.message || "Something went wrong. Please try again."}
+          </p>
         )}
 
         <button className="checkout-submit" type="submit" disabled={pending}>

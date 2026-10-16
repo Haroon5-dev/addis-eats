@@ -127,10 +127,20 @@ export async function placeOrder(previousState, formData) {
 
   const session = await getSession();
   if (!session) return { status: "error", fieldErrors: {}, message: "Please sign in before placing an order." };
-  const order = await createOrder({
-    ...parsed.data,
-    ownerId: session.userId,
-  });
+  let order;
+  try {
+    order = await createOrder({
+      ...parsed.data,
+      ownerId: session.userId,
+    });
+  } catch (error) {
+    console.error("Order creation failed:", error);
+    return {
+      status: "error",
+      fieldErrors: {},
+      message: "We couldn't save your order. Please check your order history before trying again. If the problem continues, contact support.",
+    };
+  }
 
   return {
     status: "success",
